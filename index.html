@@ -85,6 +85,19 @@ h1 span{background:linear-gradient(90deg,var(--accent),var(--violet));-webkit-ba
 .themebtn svg{width:19px;height:19px}
 @media (max-width:560px){.tabs{flex:1}.tab{flex:1;justify-content:center;padding:11px 8px}}
 .view{display:flex;flex-direction:column;gap:28px}
+.tbadge{min-width:19px;height:19px;padding:0 5px;border-radius:999px;background:var(--danger);color:#fff;font-size:11.5px;font-weight:700;display:inline-grid;place-items:center;margin-left:2px}
+.news{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.news-h{position:relative;padding-right:24px;font-size:14px;color:var(--muted)}
+.news-h b{color:var(--ink)}
+.news-x{all:unset;cursor:pointer;position:absolute;top:0;right:0;color:var(--muted);padding:0 4px;font-size:14px}
+.news-x:hover{color:var(--ink)}
+.news-i{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500}
+.news-i i{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.news-i em{font-style:normal;color:var(--muted);font-weight:400;margin-left:auto}
+.tag.new,.newtag{background:var(--danger);color:#fff;font-weight:700}
+.newtag{font-family:var(--body);font-size:11px;padding:2px 7px;border-radius:999px;margin-right:6px;vertical-align:2px;display:inline-block;line-height:1.3}
+.uccard .newtag,.uccard span.newtag{color:#fff;font-size:11px;font-weight:700;vertical-align:3px;margin:0 0 0 4px}
+.sec summary .newtag{margin:0 0 0 2px;vertical-align:0}
 
 /* ---------- próxima avaliação ---------- */
 .term{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
@@ -197,6 +210,10 @@ select.inp{appearance:none;background-image:linear-gradient(45deg,transparent 50
 .msg{font-size:14px;color:var(--muted);min-height:1.2em;margin:0}
 .msg.err{color:var(--danger)}.msg.ok{color:var(--term)}
 .libbar{display:flex;gap:10px;align-items:center}
+.fine{margin:0;font-size:13px;color:var(--muted)}
+.fine b{color:var(--ink);font-weight:600}
+.linkbtn{all:unset;cursor:pointer;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.linkbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .search{position:relative;flex:1;min-width:0}
 .search svg{position:absolute;left:12px;top:50%;width:17px;height:17px;margin-top:-8.5px;color:var(--muted);pointer-events:none}
 .search .inp{padding-left:38px;background:var(--surface)}
@@ -272,12 +289,13 @@ footer b{color:var(--term);font-weight:600;font-family:var(--mono)}
   <div class="navrow">
     <nav class="tabs" role="tablist" aria-label="Secções">
       <button class="tab" role="tab" id="tab-aval" aria-controls="view-aval" aria-selected="true" data-v="aval"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M2 6.5h12M5.5 1.5v3M10.5 1.5v3"/></svg>Avaliações</button>
-      <button class="tab" role="tab" id="tab-lib" aria-controls="view-lib" aria-selected="false" data-v="lib"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 2.5h3v11h-3zM6.5 2.5h3v11h-3zM10.3 3.2l2.9-.8 2.3 10.6-2.9.8z"/></svg>Biblioteca</button>
+      <button class="tab" role="tab" id="tab-lib" aria-controls="view-lib" aria-selected="false" data-v="lib"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2.5 2.5h3v11h-3zM6.5 2.5h3v11h-3zM10.3 3.2l2.9-.8 2.3 10.6-2.9.8z"/></svg>Biblioteca<span class="tbadge" id="libBadge" hidden></span></button>
     </nav>
     <button class="themebtn" id="themeBtn" type="button"></button>
   </div>
 
   <div class="view" id="view-aval" role="tabpanel" aria-labelledby="tab-aval">
+    <section class="news" id="evNews" role="status" hidden></section>
     <section class="term" aria-live="polite">
       <div class="term-bar"><i></i><i></i><i></i><span>proxima_avaliacao.sh</span></div>
       <div class="term-body" id="next"></div>
@@ -320,8 +338,8 @@ footer b{color:var(--term);font-weight:600;font-family:var(--mono)}
             <div class="field"><label for="upUc">Cadeira</label><select class="inp" id="upUc" required></select></div>
             <div class="field"><label for="upTipo">Tipo</label><select class="inp" id="upTipo" required></select></div>
           </div>
-          <div class="field"><label for="upPor">O teu nome (opcional)</label><input class="inp" id="upPor" maxlength="60"></div>
-          <label class="drop" id="drop"><input type="file" id="upFiles" multiple><b>Escolhe ficheiros</b> ou arrasta-os para aqui<br><small>até 25 MB cada</small></label>
+          <div class="field"><label for="upPor">O teu nome <span style="color:var(--danger)">*</span></label><input class="inp" id="upPor" maxlength="60" required minlength="2" autocomplete="name" placeholder="Primeiro e último nome (obrigatório)"></div>
+          <label class="drop" id="drop"><input type="file" id="upFiles" multiple><b>Escolhe ficheiros</b> ou arrasta-os para aqui<br><small>PDF, Word, PowerPoint, Excel, imagens ou código · até 25 MB cada</small></label>
           <div class="queue" id="queue"></div>
           <div class="row2" style="align-items:center"><button class="btn" type="submit" id="upBtn">Enviar</button><p class="msg" id="upMsg" role="status" style="flex:1"></p></div>
         </form>
@@ -452,7 +470,7 @@ function renderList(){
     const d=parse(e.d), n=diff(d), past=n<0, soon=!past&&n<=7;
     const mk = `${d.getFullYear()}-${d.getMonth()}`;
     if(mk!==lastM){ lastM=mk; html += `<div class="mh"><span><b>//</b> ${MONTHS[d.getMonth()]} ${d.getFullYear()}</span></div>`; }
-    const tags = [`<span class="tag k">${e.k}</span>`]
+    const tags = (isNew(e)?[`<span class="tag new">novo</span>`]:[]).concat([`<span class="tag k">${e.k}</span>`])
       .concat(e.s?[`<span class="tag soft">${e.s.replace(":","h")}</span>`]:[])
       .concat((e.tags||[]).map(t=>`<span class="tag soft">${t}</span>`)).join("");
     html += `<div class="row${past?" past":""}${soon?" soon":""}" style="--c:${col(e.uc)}">
@@ -492,6 +510,33 @@ document.getElementById("filters").addEventListener("click", ev=>{
 renderAll();
 
 
+/* ================= novidades desde a última visita ================= */
+var NEW_EV; // sem valor inicial: o calendário (mais acima) já pode tê-lo preenchido
+function evKey(e){ return [e.uc, e.d, e.s||"", e.t].join("|"); }
+function initSeen(){
+  NEW_EV = new Set();
+  var keys = EVENTS.map(evKey), seen = null;
+  try{ seen = JSON.parse(localStorage.getItem("lei-seen-ev") || "null"); }catch(e){}
+  if(Array.isArray(seen)){
+    EVENTS.forEach(function(e){ var k = evKey(e); if(seen.indexOf(k) === -1 && target(e) > new Date()) NEW_EV.add(k); });
+  }
+  // a partir de agora estas datas contam como vistas (as marcas ficam até fechar a página)
+  try{ localStorage.setItem("lei-seen-ev", JSON.stringify(keys)); }catch(e){}
+}
+function isNew(e){ if(!NEW_EV) initSeen(); return NEW_EV.has(evKey(e)); }
+function renderNews(){
+  if(!NEW_EV) initSeen();
+  var box = document.getElementById("evNews");
+  var evs = EVENTS.filter(isNew).sort(function(a,b){ return target(a)-target(b); });
+  if(!evs.length){ box.hidden = true; return; }
+  box.innerHTML = '<div class="news-h"><b>🔔 ' + (evs.length===1 ? "1 novidade" : evs.length + " novidades") + ' no calendário</b> desde a tua última visita' +
+    '<button class="news-x" type="button" aria-label="Fechar aviso">✕</button></div>' +
+    evs.map(function(e){ var d = parse(e.d); return '<div class="news-i" style="--c:' + col(e.uc) + '"><i></i>' + UC[e.uc].s + ' · ' + e.t + ' <em>' + d.getDate() + ' ' + MON[d.getMonth()] + '</em></div>'; }).join("");
+  box.hidden = false;
+  box.querySelector(".news-x").onclick = function(){ box.hidden = true; };
+}
+renderNews();
+
 /* ================= tema claro / escuro ================= */
 const Theme = (()=>{
   const mq = window.matchMedia ? matchMedia("(prefers-color-scheme: dark)") : null;
@@ -523,6 +568,7 @@ function showView(v){
   document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected", String(t.dataset.v===v)));
   document.getElementById("view-aval").hidden = v!=="aval";
   document.getElementById("view-lib").hidden = v!=="lib";
+  if(window.Lib) Lib.badge();
   if(v==="lib") Lib.open();
 }
 document.querySelector(".tabs").addEventListener("click", ev=>{
@@ -540,6 +586,8 @@ const Lib = (()=>{
   const LUC = Object.assign({}, UC, { ger:{s:"Geral", n:"Geral (horários, regulamentos…)", c:"--muted"} });
   const TIPOS = { testes:"Testes anteriores", exerc:"Exercícios e resoluções", slides:"Slides e apontamentos", resumos:"Resumos", outros:"Outros" };
   const MAX = 25*1024*1024;
+  // tem de coincidir com EXT_PERMITIDAS no script
+  const EXT_OK = ["pdf","png","jpg","jpeg","gif","webp","heic","doc","docx","ppt","pptx","xls","xlsx","odt","odp","ods","rtf","txt","md","csv","py","c","h","cpp","hpp","cs","java","js","ts","sql","json","xml","ipynb","r","m","asm","pl","sh"];
   const DL = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M8 2v8.5M4.5 7 8 10.5 11.5 7M2.5 13.5h11"/></svg>';
   const BACK = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>';
   const $ = id => document.getElementById(id);
@@ -549,8 +597,28 @@ const Lib = (()=>{
   const dstr = iso => { const d=new Date(iso); return `${d.getDate()} ${MON[d.getMonth()]}`; };
   const plural = (n,s,p) => `${n} ${n===1?s:p}`;
 
-  let code = "", files = null, view = "home", started = false, queue = [];
-  try{ code = localStorage.getItem("lei-lib-code") || ""; }catch(e){}
+  // ficheiros novos: o que entrou desde a última vez que esta pessoa abriu a biblioteca
+  let libSeen = null, libPrev = null;
+  try{ libSeen = localStorage.getItem("lei-lib-seen"); }catch(e){}
+  const mine = f => nome && f.por === nome;
+  const isNewF = f => libPrev && f.data > libPrev && !mine(f);
+  function badge(){
+    const b = $("libBadge"); if(!b) return;
+    const n = (files && libSeen && $("view-lib").hidden) ? files.filter(f=>f.data > libSeen && !mine(f)).length : 0;
+    b.textContent = n > 9 ? "9+" : n; b.hidden = !n;
+    b.setAttribute("aria-label", n + " ficheiros novos");
+  }
+  function markSeen(){
+    const now = new Date().toISOString();
+    if(libPrev === null) libPrev = libSeen || now; // 1.ª visita de sempre: nada aparece como novo
+    libSeen = now; try{ localStorage.setItem("lei-lib-seen", now); }catch(e){}
+    badge();
+  }
+
+  let code = "", nome = "", files = null, view = "home", started = false, queue = [], pending = null;
+  try{ code = localStorage.getItem("lei-lib-code") || ""; nome = localStorage.getItem("lei-lib-nome") || ""; }catch(e){}
+  // última lista vista fica guardada no browser: a biblioteca abre logo e atualiza em segundo plano
+  try{ if(code){ const c = JSON.parse(localStorage.getItem("lei-lib-cache") || "null"); if(Array.isArray(c)) files = c; } }catch(e){}
 
   async function api(body){
     const r = await fetch(API_URL, { method:"POST", headers:{ "Content-Type":"text/plain;charset=utf-8" }, body: JSON.stringify(Object.assign({ codigo: code }, body)) });
@@ -562,7 +630,7 @@ const Lib = (()=>{
   }
 
   function logout(msg){
-    code = ""; try{ localStorage.removeItem("lei-lib-code"); }catch(e){}
+    code = ""; files = null; try{ localStorage.removeItem("lei-lib-code"); localStorage.removeItem("lei-lib-cache"); }catch(e){}
     $("lib").hidden = true; $("gate").hidden = false;
     const m = $("gateMsg"); m.textContent = msg || ""; m.className = "msg" + (msg?" err":"");
   }
@@ -570,7 +638,7 @@ const Lib = (()=>{
   function open(){
     if(!started){ started = true; setup(); }
     if(!API_URL){ $("gateForm").hidden = true; const m=$("gateMsg"); m.textContent="A biblioteca ainda está a ser configurada. Volta daqui a pouco."; m.className="msg"; return; }
-    if(code){ $("gate").hidden = true; $("lib").hidden = false; if(!files) load(); }
+    if(code){ markSeen(); $("gate").hidden = true; $("lib").hidden = false; if(files) render(); load(); }
   }
 
   function setup(){
@@ -583,9 +651,11 @@ const Lib = (()=>{
       code = $("codeIn").value.trim(); if(!code) return;
       btn.disabled = true; m.className = "msg"; m.innerHTML = '<span class="spin"></span> a verificar…';
       try{
-        await api({ acao:"entrar" });
+        m.innerHTML = '<span class="spin"></span> a abrir a biblioteca…';
+        const r = await api({ acao:"listar" });
         try{ localStorage.setItem("lei-lib-code", code); }catch(e){}
-        m.textContent = ""; $("gate").hidden = true; $("lib").hidden = false; load();
+        setFiles(r.ficheiros || []);
+        m.textContent = ""; $("gate").hidden = true; $("lib").hidden = false; render();
       }catch(e){ m.textContent = e.message==="codigo" ? "Código errado." : e.message; m.className = "msg err"; }
       btn.disabled = false;
     });
@@ -596,7 +666,7 @@ const Lib = (()=>{
       if(show){ if(view!=="home") $("upUc").value = view; p.scrollIntoView({ behavior:"smooth", block:"nearest" }); }
     });
     $("upClose").addEventListener("click", ()=>{ $("upPanel").hidden = true; $("upToggle").setAttribute("aria-expanded","false"); });
-    try{ $("upPor").value = localStorage.getItem("lei-lib-nome") || ""; }catch(e){}
+    $("upPor").value = nome;
 
     const input = $("upFiles"), drop = $("drop");
     input.addEventListener("change", ()=>{ addFiles(input.files); input.value=""; });
@@ -614,7 +684,11 @@ const Lib = (()=>{
   }
 
   function addFiles(list){
-    for(const f of list) queue.push({ f, st: f.size>MAX ? "err" : "", msg: f.size>MAX ? "maior que 25 MB" : size(f.size) });
+    for(const f of list){
+      const ext = (f.name.includes(".") ? f.name.split(".").pop() : "").toLowerCase();
+      const bad = !EXT_OK.includes(ext) ? `tipo .${ext||"?"} não aceite` : f.size>MAX ? "maior que 25 MB" : "";
+      queue.push({ f, st: bad ? "err" : "", msg: bad || size(f.size) });
+    }
     drawQueue();
   }
   function drawQueue(){
@@ -623,16 +697,18 @@ const Lib = (()=>{
   const b64 = f => new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(String(r.result).split(",")[1]||""); r.onerror=()=>rej(new Error("Não consegui ler o ficheiro.")); r.readAsDataURL(f); });
 
   async function upload(){
-    const m = $("upMsg"), uc = $("upUc").value, tipo = $("upTipo").value, por = $("upPor").value.trim();
+    const m = $("upMsg"), uc = $("upUc").value, tipo = $("upTipo").value;
+    nome = $("upPor").value.replace(/\s+/g," ").trim();
     const todo = queue.filter(q=>q.st==="");
     if(!uc || !tipo){ m.textContent = "Escolhe a cadeira e o tipo."; m.className = "msg err"; return; }
+    if(nome.length < 2){ m.textContent = "Escreve o teu nome (fica guardado, só precisas de o fazer uma vez)."; m.className = "msg err"; $("upPor").focus(); return; }
+    try{ localStorage.setItem("lei-lib-nome", nome); }catch(e){}
     if(!todo.length){ m.textContent = "Escolhe pelo menos um ficheiro."; m.className = "msg err"; return; }
-    try{ localStorage.setItem("lei-lib-nome", por); }catch(e){}
     $("upBtn").disabled = true; m.className = "msg"; let ok = 0;
     for(const q of todo){
       q.msg = "a enviar…"; drawQueue(); m.innerHTML = `<span class="spin"></span> a enviar ${ok+1} de ${todo.length}…`;
       try{
-        const r = await api({ acao:"enviar", uc, tipo, por, nome:q.f.name, mime:q.f.type, dados: await b64(q.f) });
+        const r = await api({ acao:"enviar", uc, tipo, nome, ficheiro:q.f.name, mime:q.f.type, dados: await b64(q.f) });
         q.st = "ok"; q.msg = r.nome!==q.f.name ? `enviado como ${r.nome}` : "enviado ✓"; ok++;
       }catch(e){ q.st = "err"; q.msg = e.message==="codigo" ? "código inválido" : e.message; if(e.message==="codigo") break; }
       drawQueue();
@@ -641,21 +717,43 @@ const Lib = (()=>{
     m.textContent = ok===todo.length ? `${plural(ok,"ficheiro adicionado","ficheiros adicionados")}. Obrigada!` : `${ok} de ${todo.length} enviados. Vê os erros acima.`;
     m.className = "msg " + (ok===todo.length ? "ok" : "err");
     queue = queue.filter(q=>q.st!=="ok"); setTimeout(drawQueue, 2500);
-    if(ok){ view = uc; load(); }
+    if(ok){ view = uc; pending = null; load(); }
   }
 
-  async function load(){
-    $("libList").innerHTML = `<p class="libempty"><span class="spin"></span> a carregar a biblioteca…</p>`;
-    try{ files = (await api({ acao:"listar" })).ficheiros || []; render(); }
-    catch(e){ if(e.message!=="codigo") $("libList").innerHTML = `<p class="libempty">${esc(e.message)}<br><br><button class="btn ghost" type="button" onclick="Lib.load()">Tentar de novo</button></p>`; }
+  function setFiles(f){
+    files = f;
+    if(!libSeen){ libSeen = new Date().toISOString(); try{ localStorage.setItem("lei-lib-seen", libSeen); }catch(e){} }
+    if(!$("view-lib").hidden) markSeen(); else badge();
+    try{ localStorage.setItem("lei-lib-cache", JSON.stringify(f)); }catch(e){}
   }
+
+  // pede a lista ao servidor; se já houver uma lista guardada, atualiza sem bloquear o ecrã
+  function load(){
+    if(pending) return pending;
+    if(!files) $("libList").innerHTML = `<p class="libempty"><span class="spin"></span> a carregar a biblioteca…</p>`;
+    pending = api({ acao:"listar" }).then(r=>{
+      const novo = r.ficheiros || [];
+      const mudou = JSON.stringify(novo) !== JSON.stringify(files);
+      setFiles(novo);
+      if(mudou) render();
+    }).catch(e=>{
+      if(e.message!=="codigo" && !files) $("libList").innerHTML = `<p class="libempty">${esc(e.message)}<br><br><button class="btn ghost" type="button" onclick="Lib.load()">Tentar de novo</button></p>`;
+    }).finally(()=>{ pending = null; });
+    return pending;
+  }
+
+  // ao abrir o site, já vai buscando a lista para quando se tocar em "Biblioteca"
+  const hadCode = !!code;
+  function prefetch(){ if(API_URL && hadCode && code) load(); }
 
   const frow = (f, showUc) => {
     const ext = (f.nome.includes(".") ? f.nome.split(".").pop() : "doc").slice(0,4);
-    const meta = [showUc ? LUC[f.uc].s : null, showUc ? TIPOS[f.tipo] : null, size(f.tam), dstr(f.data), f.por || null].filter(Boolean).join(" · ");
+    const d = new Date(f.data), quando = `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()!==new Date().getFullYear()?d.getFullYear()+" ":""}às ${pad(d.getHours())}h${pad(d.getMinutes())}`;
+    const quem = `Enviado ${f.por ? "por " + f.por + " " : ""}a ${quando}`;
+    const meta = [showUc ? LUC[f.uc].s : null, showUc ? TIPOS[f.tipo] : null, size(f.tam)].filter(Boolean).join(" · ");
     return `<button class="frow" type="button" data-id="${esc(f.id)}" style="--c:${lc(f.uc)}" aria-label="Descarregar ${esc(f.nome)}">
       <span class="ext">${esc(ext)}</span>
-      <span class="fmeta"><span class="fname">${esc(f.nome)}</span><span class="fsub">${esc(meta)}</span></span>
+      <span class="fmeta"><span class="fname">${isNewF(f) ? '<span class="newtag">novo</span>' : ""}${esc(f.nome)}</span><span class="fsub">${esc(quem)}</span><span class="fsub">${esc(meta)}</span></span>
       <span class="dlico">${DL}</span></button>`;
   };
 
@@ -675,8 +773,9 @@ const Lib = (()=>{
       const by = {}; files.forEach(f=>{ (by[f.uc] = by[f.uc] || []).push(f); });
       list.innerHTML = `<div class="ucgrid">` + Object.keys(LUC).map(k=>{
         const fs = by[k] || [];
+        const nn = fs.filter(isNewF).length;
         const sub = fs.length ? `<strong>${plural(fs.length,"ficheiro","ficheiros")}</strong> · último a ${dstr(fs[0].data)}` : "ainda sem ficheiros";
-        return `<button class="uccard" type="button" data-uc="${k}" style="--c:${lc(k)}"><b>${esc(LUC[k].s)}</b><span>${sub}</span></button>`;
+        return `<button class="uccard" type="button" data-uc="${k}" style="--c:${lc(k)}"><b>${esc(LUC[k].s)}${nn ? ` <span class="newtag">${nn} ${nn===1?"novo":"novos"}</span>` : ""}</b><span>${sub}</span></button>`;
       }).join("") + `</div>` + (files.length ? "" : `<p class="libempty">A biblioteca ainda está vazia. Usa “Adicionar” para pôr lá o primeiro ficheiro.</p>`);
       return;
     }
@@ -690,7 +789,8 @@ const Lib = (()=>{
       </div>` +
       (tipos.length ? tipos.map(t=>{
         const ft = fs.filter(f=>f.tipo===t);
-        return `<details class="sec"${t===openT?" open":""}><summary>${TIPOS[t]} <em>${ft.length}</em></summary><div class="flist">${ft.map(f=>frow(f,false)).join("")}</div></details>`;
+        const nn = ft.filter(isNewF).length;
+        return `<details class="sec"${t===openT||nn?" open":""}><summary>${TIPOS[t]} <em>${ft.length}</em>${nn ? `<span class="newtag">${nn} ${nn===1?"novo":"novos"}</span>` : ""}</summary><div class="flist">${ft.map(f=>frow(f,false)).join("")}</div></details>`;
       }).join("") : `<p class="libempty">Ainda não há ficheiros de ${esc(LUC[view].s)}. Tens algum? Usa “Adicionar”.</p>`);
   }
 
@@ -711,9 +811,11 @@ const Lib = (()=>{
     ico.innerHTML = DL; delete b.dataset.busy;
   }
 
-  return { open, load };
+  return { open, load, prefetch, badge };
 })();
 showView(location.hash==="#biblioteca" ? "lib" : "aval");
+Lib.badge();
+setTimeout(Lib.prefetch, 300);
 
 /* ================= céu estrelado (só no tema escuro, sem animação) ================= */
 (function(){
